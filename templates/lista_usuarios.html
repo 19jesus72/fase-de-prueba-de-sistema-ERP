@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Usuarios - Sistema de Gestión</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ESTILOS CONSISTENTES CON LA PALETA DE COLORES */
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            background-color: #00264d; /* Azul marino */
+        }
+
+        .navbar-brand, .nav-link {
+            color: white !important;
+            font-weight: bold;
+        }
+
+        .page-title {
+            color: #00264d; /* Azul marino */
+            font-weight: bold;
+            margin: 20px 0;
+            text-align: center;
+            text-transform: uppercase;
+            border-bottom: 2px solid #00264d;
+            padding-bottom: 10px;
+        }
+
+        .table-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 2px solid #00264d;
+            margin-bottom: 30px;
+        }
+
+        .table th {
+            background-color: #00264d;
+            color: white;
+            font-weight: bold;
+        }
+
+        .btn-volver {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            font-weight: bold;
+        }
+
+        .btn-eliminar {
+            color: #dc3545;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .btn-eliminar:hover {
+            color: #bd2130;
+        }
+
+        .footer {
+            background-color: #00264d;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            margin-top: 30px;
+            font-weight: bold;
+        }
+
+        /* Estilos para el modal de confirmación */
+        .modal-header {
+            background-color: #00264d;
+            color: white;
+        }
+
+        .modal-title {
+            font-weight: bold;
+        }
+
+        .btn-confirmar {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            font-weight: bold;
+        }
+
+        .btn-confirmar:hover {
+            background-color: #bd2130;
+            border-color: #bd2130;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('inicio_usuarios') }}">Sistema de Gestión</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('inicio_usuarios') }}">Inicio</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            Usuarios
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('crear_usuario') }}">Creación de Usuario</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('editar_usuario', usuario_id=1) }}">Edición de Usuario</a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('lista_usuarios') }}">Lista de Usuarios</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Configuración</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Cerrar Sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="container">
+        <h1 class="page-title">Lista de Usuarios</h1>
+
+        <!-- Tabla de usuarios -->
+        <div class="table-container">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID de Usuario</th>
+                            <th>Nombre del Usuario</th>
+                            <th>Cargo del Usuario</th>
+                            <th>Fecha de Ingreso</th>
+                            <th>Eliminar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for usuario_id, usuario in usuarios.items() %}
+                        <tr>
+                            <td>{{ usuario.id }}</td>
+                            <td>{{ usuario.nombre }} {{ usuario.apellido }}</td>
+                            <td>{{ usuario.cargo | capitalize }}</td>
+                            <td>{{ usuario.fecha_ingreso }}</td>
+                            <td>
+                                <button type="button" class="btn-eliminar" data-bs-toggle="modal" data-bs-target="#confirmarEliminacion" data-usuario-id="{{ usuario.id }}" data-usuario-nombre="{{ usuario.nombre }} {{ usuario.apellido }}">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="d-flex justify-content-start mt-3">
+                <a href="{{ url_for('inicio_usuarios') }}" class="btn btn-volver">
+                    &larr; Volver al Inicio
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación de eliminación -->
+    <div class="modal fade" id="confirmarEliminacion" tabindex="-1" aria-labelledby="confirmarEliminacionLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmarEliminacionLabel">Confirmar Eliminación</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>¿Está seguro de que desea eliminar al usuario <span id="nombreUsuario" class="fw-bold"></span>?</p>
+                    <p class="text-danger">Esta acción no se puede deshacer.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <form id="formEliminarUsuario" method="POST" action="">
+                        <button type="submit" class="btn btn-confirmar">Eliminar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pie de página -->
+    <footer class="footer">
+        <div class="container">
+            <p>Sistema de Gestión de Usuarios &copy; 2023 - Desarrollado con Flask y Python</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Configurar el modal de confirmación
+        const confirmarEliminacion = document.getElementById('confirmarEliminacion');
+        confirmarEliminacion.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const usuarioId = button.getAttribute('data-usuario-id');
+            const usuarioNombre = button.getAttribute('data-usuario-nombre');
+
+            const modalTitle = confirmarEliminacion.querySelector('.modal-title');
+            const modalBodyInput = confirmarEliminacion.querySelector('#nombreUsuario');
+            const formEliminar = document.getElementById('formEliminarUsuario');
+
+            modalTitle.textContent = 'Confirmar Eliminación - ID: ' + usuarioId;
+            modalBodyInput.textContent = usuarioNombre;
+            formEliminar.action = '/eliminar_usuario/' + usuarioId;
+        });
+    </script>
+</body>
+</html>

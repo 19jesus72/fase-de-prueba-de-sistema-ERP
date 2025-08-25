@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edición de Usuarios - Sistema de Gestión</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* ESTILOS CONSISTENTES CON LA PALETA DE COLORES */
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            background-color: #00264d; /* Azul marino */
+        }
+
+        .navbar-brand, .nav-link {
+            color: white !important;
+            font-weight: bold;
+        }
+
+        .page-title {
+            color: #00264d; /* Azul marino */
+            font-weight: bold;
+            margin: 20px 0;
+            text-align: center;
+            text-transform: uppercase;
+            border-bottom: 2px solid #00264d;
+            padding-bottom: 10px;
+        }
+
+        .form-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 2px solid #00264d;
+            margin-bottom: 30px;
+        }
+
+        .form-label {
+            color: #00264d;
+            font-weight: bold;
+        }
+
+        .btn-guardar {
+            background-color: #00264d;
+            border-color: #00264d;
+            font-weight: bold;
+            padding: 10px 20px;
+            font-size: 18px;
+        }
+
+        .btn-guardar:hover {
+            background-color: #001a33;
+            border-color: #001a33;
+        }
+
+        .btn-volver {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            font-weight: bold;
+        }
+
+        .form-control:focus {
+            border-color: #00264d;
+            box-shadow: 0 0 0 0.2rem rgba(0, 38, 77, 0.25);
+        }
+
+        .footer {
+            background-color: #00264d;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            margin-top: 30px;
+            font-weight: bold;
+        }
+
+        /* Estilo para el ID de usuario (solo lectura) */
+        .id-field {
+            background-color: #e9ecef;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('inicio_usuarios') }}">Sistema de Gestión</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('inicio_usuarios') }}">Inicio</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            Usuarios
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('crear_usuario') }}">Creación de Usuario</a></li>
+                            <li><a class="dropdown-item" href="#">Edición de Usuario</a></li>
+                            <li><a class="dropdown-item" href="#">Lista de Usuarios</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Configuración</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Cerrar Sesión</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="container">
+        <h1 class="page-title">Edición de Usuarios</h1>
+
+        <!-- Formulario de edición de usuarios -->
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="form-container">
+                    <form method="POST" action="{{ url_for('editar_usuario', usuario_id=usuario.id) }}">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="id_usuario" class="form-label">ID del Usuario</label>
+                                <input type="text" class="form-control id-field" id="id_usuario"
+                                       value="{{ usuario.id }}" readonly>
+                                <div class="form-text">Identificador único del usuario (no editable)</div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="nombre" class="form-label">Nombre de Usuario</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre"
+                                       value="{{ usuario.nombre }}" required>
+                                <div class="form-text">Edite el nombre del usuario</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="apellido" class="form-label">Apellido de Usuario</label>
+                                <input type="text" class="form-control" id="apellido" name="apellido"
+                                       value="{{ usuario.apellido }}" required>
+                                <div class="form-text">Edite el apellido del usuario</div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="fecha_nacimiento" class="form-label">Fecha de Nacimiento</label>
+                                <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento"
+                                       value="{{ usuario.fecha_nacimiento }}" required>
+                                <div class="form-text">El pastel va para otro dia? que sea de chocolate </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="fecha_ingreso_personal" class="form-label">fecha_ingreso_personal</label>
+                                <input type="date" class="form-control" id="fecha_ingreso_personal" name="fecha_ingreso_personal" required>
+                                <div class="form-text">Ingrese la fecha de ingreso del personal</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="correo" class="form-label">Correo Electrónico</label>
+                                <input type="email" class="form-control" id="correo" name="correo"
+                                       value="{{ usuario.correo }}" required>
+                                <div class="form-text">Ejemplo: master@mastercontrol.com.ec</div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="telefono" class="form-label">Número de Teléfono</label>
+                                <input type="tel" class="form-control" id="telefono" name="telefono"
+                                       value="{{ usuario.telefono }}" required>
+                                <div class="form-text">Formato: xxxxxxxxxx</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="cargo" class="form-label">Cargo de Usuario</label>
+                                <select class="form-select" id="cargo" name="cargo" required>
+                                    <option value="" selected disabled>Seleccione un cargo</option>
+                                    <option value="Administrador">Administrador</option>
+                                    <option value="Ingeniero">Ingeniero</option>
+                                    <option value="Bodega">Bodega</option>
+                                    <option value="Contabilidad">Contabilidad</option>
+                                    <option value="Temporal">Temporal</option>
+                                    <option value="R.R.H.H">R.R.H.H</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="direccion" class="form-label">Dirección de Domicilio</label>
+                            <textarea class="form-control" id="direccion" name="direccion" rows="3" required>{{ usuario.direccion }}</textarea>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('inicio_usuarios') }}" class="btn btn-volver">
+                                &larr; Volver al Inicio
+                            </a>
+                            <button type="submit" class="btn btn-guardar">
+                                Guardar Cambios
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pie de página -->
+    <footer class="footer">
+        <div class="container">
+            <p>Sistema de Gestión de Usuarios &copy; 2023 - Desarrollado con Flask y Python</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
